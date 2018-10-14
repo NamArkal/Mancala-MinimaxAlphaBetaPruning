@@ -26,7 +26,7 @@ def minimax(game, state, max_depth=None):
         # update node count here
         node_count += nc
 
-    if 0 == state[-1]:
+    if game.player(state) == 0:
         u = max(utilities)
     else:
         u = min(utilities)
@@ -43,7 +43,8 @@ def minimax_ab(game, state, alpha=None, beta=None, max_depth=None):
     # Update the following code to return the correct node count
     # and the correct utility.
 
-    if game.is_over(state) or max_depth == 0: return game.score(state), None, 1
+    if game.is_over(state) or max_depth == 0:
+        return game.score(state), None, 1
 
     actions = game.actions(state)
     utilities = []
@@ -56,23 +57,38 @@ def minimax_ab(game, state, alpha=None, beta=None, max_depth=None):
             None if max_depth is None else max_depth - 1)
         utilities.append(u)
         # Update node count here
+        node_count += nc
 
         if game.player(state) == 0:
-            if beta is not None and u > beta: break
-            ## Finish me! [grad] ##
+            if beta is not None and u > beta:
+                break
+            if alpha is None:
+                alpha = -9999
+
             # If the current child utility for player 0 is higher than the best
             # found so far, update alpha. Alpha is the best utility player 0 has
             # been able to achieve at any of player 0's choice points so far.
-            alpha = None  # change this to correctly update alpha
+            if u > alpha:
+                alpha = u
+            # alpha = None  # change this to correctly update alpha
         else:
-            if alpha is not None and u < alpha: break
-            ## Finish me! [grad] ##
+            if alpha is not None and u < alpha:
+                break
+            if beta is None:
+                beta = 9999
+
             # If the current child utility for player 0 is lower than the worst
             # found so far, update beta. Beta is the worst utility player 0 has
             # encountered at any of player 1's choice points so far.
-            beta = None  # change this to correctly update alpha
+            if u < beta:
+                beta = u
+            # beta = None  # change this to correctly update alpha
 
-    u = utilities[0]  # change this to update utility correctly
+    # change this to update utility correctly
+    if 0 == game.player(state):
+        u = max(utilities)
+    else:
+        u = min(utilities)
     return u, actions[utilities.index(u)], node_count + 1
 
 

@@ -126,18 +126,17 @@ class MancalaGame:
         The game is over if either player has no stones left in their small positions.
         """
 
-        tup_sum = 0
-        if 0 == state[-1]:
-            tup = state[0:self.size]
-        elif 1 == state[-1]:
-            tup = state[self.size+1:self.size*2+1]
-        else:
-            raise (Exception("Invalid player."))
+        tup_sum1 = 0
+        tup_sum2 = 0
 
-        for val in tup:
-            tup_sum += val
+        tup1 = state[0:self.size]
+        for val in tup1:
+            tup_sum1 += val
+        tup2 = state[self.size + 1:self.size * 2 + 1]
+        for val in tup2:
+            tup_sum2 += val
 
-        if 0 == tup_sum:
+        if (0 == tup_sum1) or (0 == tup_sum2):
             return True
         else:
             return False
@@ -198,7 +197,7 @@ if __name__ == "__main__":
     # mg = MancalaGame(size=3, count=2)
     mg = MancalaGame()
 
-    s = mg.initial()
+    # s = mg.initial()
     # a = mg.actions(s)
     # print(mg.string(s))
     # print(s)
@@ -207,7 +206,7 @@ if __name__ == "__main__":
     # print("Score = %d" % mg.score(s))
     # print("")
 
-    s = mg.result(s, 2)
+    # s = mg.result(s, 2)
     # print(s)
     # a = mg.actions((2, 3, 0, 0, 1, 1, 12, 9, 2, 3, 1, 0, 0, 13, 1))
     # a = mg.actions(s)
@@ -219,5 +218,5 @@ if __name__ == "__main__":
     # print("Is over: %s" % mg.is_over(s))
     # print("Score = %d" % mg.score(s))
     # print("")
-    print(mg.result((0, 4, 2, 1, 0, 2, 7, 4, 0, 2, 1, 0, 0, 25, 1), 10))
-
+    print(mg.result((0, 0, 2, 0, 2, 0, 6, 7, 1, 3, 6, 1, 0, 8, 1), 7))
+    # print(mg.score((4, 4, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 10, 0)))
