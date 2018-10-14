@@ -17,11 +17,11 @@ class MancalaGame:
         """
         return ((self.count,) * self.size + (0,)) * 2 + (0,)
 
-    # def player(self, state):
-    #     """
-    #     Return the current player in the given game state.
-    #     """
-    #     return state[-1]
+    def player(self, state):
+        """
+        Return the current player in the given game state.
+        """
+        return state[-1]
 
     def actions(self, state):
         """
@@ -32,14 +32,14 @@ class MancalaGame:
 
         action_list = []
         if 0 == state[-1]:
-            tup_player = state[0:5]
+            tup_player = state[0:self.size]
             count = 0
             for val in tup_player:
                 if 0 != val:
                     action_list.append(count)
                 count += 1
         elif 1 == state[-1]:
-            tup_player = state[7:12]
+            tup_player = state[self.size+1:self.size*2+1]
             count = 7
             for val in tup_player:
                 if 0 != val:
@@ -63,12 +63,13 @@ class MancalaGame:
         moves = state[action]
         # get list of possible next steps and their values as enumerate
         board = list(enumerate(list(state)))
+        board = [list(elem) for elem in board]
         if 0 == state[-1]:
-            board.remove(len(board)-1)
-            board.remove(len(board)-2)
+            board = board[:-1]
+            board = board[:-1]
         else:
-            board.remove(len(board)-1)
-            board.remove(self.size+1)
+            board = board[:-1]
+            del board[self.size]
 
         # for each enumerate, do rotation+add score from starting position till end of action
         # mostly as mod of size of board
@@ -79,8 +80,9 @@ class MancalaGame:
 
         board[pivot][1] = 0
         i = 1
+
         while i != (moves+1):
-            if pivot == len(board):
+            if pivot == len(board)-1:
                 pivot = -1
             pivot += 1
             board[pivot][1] += 1
@@ -88,25 +90,35 @@ class MancalaGame:
 
         # Add the other players mancala back to the board
         if state[-1] == 0:
-            board.insert(((self.size * 2) + 1), ((self.size * 2) + 1, state[(self.size * 2) + 1]))
+            board.insert((self.size * 2 + 1), [self.size * 2 + 1, state[self.size * 2 + 1]])
         else:
-            board.insert(self.size, (self.size, state[self.size]))
+            board.insert(self.size, [self.size, state[self.size]])
+
+        if 1 == state[-1]:
+            pivot += 1
+
         # at the position we end up on board, do the following
-        if (board[pivot][1]) == 1:
-            board.insert(len(board), ((len(state)-1), state[-1]))
+        if (pivot == self.size and state[-1] == 0) or (pivot == (self.size*2+1) and state[-1] == 1):
+            board.insert(len(board), [(len(state) - 1), state[-1]])
+        elif (board[pivot][1]) == 1:
             if state[-1] == 0:
-                board[self.size][1] += board[(self.size * 2) - pivot][1]
-                board[(self.size * 2) - pivot][1] = 0
+                board.insert(len(board), [(len(state) - 1), 1])
+                if 0 <= pivot < self.size:
+                    board[self.size][1] += board[(self.size * 2) - pivot][1]
+                    board[(self.size * 2) - pivot][1] = 0
             else:
-                board[self.size * 2 + 1][1] += board[self.size + pivot][1]
-                board[(self.size * 2) - pivot][1] = 0
-        elif (pivot == self.size & state[-1] == 0) | (pivot == (self.size * 2) & state[-1] == 1):
-            board.insert(len(board), ((len(state) - 1), state[-1]))
+                board.insert(len(board), [(len(state) - 1), 0])
+                if self.size < pivot < (self.size * 2 + 1):
+                    board[2 * self.size + 1][1] += board[self.size-(pivot % self.size)][1]
+                    board[self.size-(pivot % self.size)][1] = 0
         else:
             if state[-1] == 0:
-                board.insert(len(board), ((len(state) - 1), 1))
+                board.insert(len(board), [(len(state) - 1), 1])
             else:
-                board.insert(len(board), ((len(state) - 1), 0))
+                board.insert(len(board), [(len(state) - 1), 0])
+
+        board = [elem[1] for elem in board]
+        return tuple(board)
 
     def is_over(self, state):
         """
@@ -116,9 +128,9 @@ class MancalaGame:
 
         tup_sum = 0
         if 0 == state[-1]:
-            tup = state[0:5]
+            tup = state[0:self.size]
         elif 1 == state[-1]:
-            tup = state[7:12]
+            tup = state[self.size+1:self.size*2+1]
         else:
             raise (Exception("Invalid player."))
 
@@ -133,13 +145,13 @@ class MancalaGame:
     def player_sum(self, state):
         res = []
 
-        tup0 = state[0:5]
+        tup0 = state[0:self.size]
         player_sum = 0
         for val in tup0:
             player_sum += val
         res.insert(0, player_sum)
 
-        tup1 = state[7:12]
+        tup1 = state[self.size+1:self.size*2+1]
         player_sum = 0
         for val in tup1:
             player_sum += val
@@ -162,7 +174,7 @@ class MancalaGame:
             score0 = res[0]
             score1 = res[1]
 
-        score = (state[6]+score0) - (score1+state[13])
+        score = (state[self.size]+score0) - (score1+state[self.size*2+1])
 
         return score
 
@@ -188,19 +200,24 @@ if __name__ == "__main__":
 
     s = mg.initial()
     # a = mg.actions(s)
-    print(mg.string(s))
-    print(s)
-    # print(a)
-    # print("Is over: %s" % mg.is_over(s))
-    # print("Score = %d" % mg.score(s))
-    print("")
-
-    # s = mg.result(s, 2)
-    # a = mg.actions(s)
     # print(mg.string(s))
     # print(s)
     # print(a)
     # print("Is over: %s" % mg.is_over(s))
     # print("Score = %d" % mg.score(s))
     # print("")
+
+    s = mg.result(s, 2)
+    # print(s)
+    # a = mg.actions((2, 3, 0, 0, 1, 1, 12, 9, 2, 3, 1, 0, 0, 13, 1))
+    # a = mg.actions(s)
+    # print(a)
+    # print(mg.score((0, 0, 0, 0, 0, 0, 14, 0, 2, 0, 0, 3, 0, 19, 0)))
+    # print(mg.string(s))
+    # print(s)
+    # print(a)
+    # print("Is over: %s" % mg.is_over(s))
+    # print("Score = %d" % mg.score(s))
+    # print("")
+    print(mg.result((0, 4, 2, 1, 0, 2, 7, 4, 0, 2, 1, 0, 0, 25, 1), 10))
 

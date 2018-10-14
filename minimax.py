@@ -13,7 +13,8 @@ def minimax(game, state, max_depth=None):
     # Update the following code to return the correct node count
     # and the correct utility.
 
-    if game.is_over(state) or max_depth == 0: return game.score(state), None, 1
+    if game.is_over(state) or max_depth == 0:
+        return game.score(state), None, 1
 
     actions = game.actions(state)
     utilities = []
@@ -23,8 +24,13 @@ def minimax(game, state, max_depth=None):
         u, _, nc = minimax(game, new_state, None if max_depth is None else max_depth - 1)
         utilities.append(u)
         # update node count here
+        node_count += nc
 
-    u = utilities[0]  # change this to update utility correctly
+    if 0 == state[-1]:
+        u = max(utilities)
+    else:
+        u = min(utilities)
+    # change this to update utility correctly
     return u, actions[utilities.index(u)], node_count + 1
 
 
