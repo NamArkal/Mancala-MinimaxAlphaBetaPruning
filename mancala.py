@@ -88,15 +88,25 @@ class MancalaGame:
 
         # Add the other players mancala back to the board
         if state[-1] == 0:
-            board.insert(((self.size * 2) + 1), state[(self.size * 2) + 1])
+            board.insert(((self.size * 2) + 1), ((self.size * 2) + 1, state[(self.size * 2) + 1]))
         else:
-
+            board.insert(self.size, (self.size, state[self.size]))
         # at the position we end up on board, do the following
         if (board[pivot][1]) == 1:
             board.insert(len(board), ((len(state)-1), state[-1]))
-
-            if
-            board += board[(self.size * 2) - pivot][1]
+            if state[-1] == 0:
+                board[self.size][1] += board[(self.size * 2) - pivot][1]
+                board[(self.size * 2) - pivot][1] = 0
+            else:
+                board[self.size * 2 + 1][1] += board[self.size + pivot][1]
+                board[(self.size * 2) - pivot][1] = 0
+        elif (pivot == self.size & state[-1] == 0) | (pivot == (self.size * 2) & state[-1] == 1):
+            board.insert(len(board), ((len(state) - 1), state[-1]))
+        else:
+            if state[-1] == 0:
+                board.insert(len(board), ((len(state) - 1), 1))
+            else:
+                board.insert(len(board), ((len(state) - 1), 0))
 
     def is_over(self, state):
         """
