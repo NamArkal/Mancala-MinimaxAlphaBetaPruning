@@ -2,3 +2,5 @@ venv/
 .DS_Store
 .idea/
 mancala.pyc
+nr.pyc
+minimax.pyc

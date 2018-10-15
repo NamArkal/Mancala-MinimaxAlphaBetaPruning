@@ -5,6 +5,7 @@ to the final position. The last element of the tuple is the current
 player, either 0 or 1.
 """
 
+
 class MancalaGame:
 
     def __init__(self, size=6, count=4):
@@ -30,26 +31,16 @@ class MancalaGame:
         on the current player's half of the board.
         """
 
-        action_list = []
-        if 0 == state[-1]:
-            tup_player = state[0:self.size]
-            count = 0
-            for val in tup_player:
-                if 0 != val:
-                    action_list.append(count)
-                count += 1
-        elif 1 == state[-1]:
-            tup_player = state[self.size+1:self.size*2+1]
-            count = 7
-            for val in tup_player:
-                if 0 != val:
-                    action_list.append(count)
-                count += 1
+        res = []
+        if self.player(state) == 0:
+            for i, j in enumerate(list(state[0:self.size])):
+                if j != 0:
+                    res.append(i)
         else:
-            raise (Exception("Invalid player."))
-
-        return action_list
-
+            for i, j in enumerate(list(state[self.size + 1:self.size * 2 + 1])):
+                if j != 0:
+                    res.append(i + self.size + 1)
+        return res
 
     def result(self, state, action):
         """
@@ -81,8 +72,8 @@ class MancalaGame:
         board[pivot][1] = 0
         i = 1
 
-        while i != (moves+1):
-            if pivot == len(board)-1:
+        while i != (moves + 1):
+            if pivot == len(board) - 1:
                 pivot = -1
             pivot += 1
             board[pivot][1] += 1
@@ -98,7 +89,7 @@ class MancalaGame:
             pivot += 1
 
         # at the position we end up on board, do the following
-        if (pivot == self.size and state[-1] == 0) or (pivot == (self.size*2+1) and state[-1] == 1):
+        if (pivot == self.size and state[-1] == 0) or (pivot == (self.size * 2 + 1) and state[-1] == 1):
             board.insert(len(board), [(len(state) - 1), state[-1]])
         elif (board[pivot][1]) == 1:
             if state[-1] == 0:
@@ -112,7 +103,7 @@ class MancalaGame:
                 board.insert(len(board), [(len(state) - 1), 0])
                 if self.size < pivot < (self.size * 2 + 1):
                     board[2 * self.size + 1][1] += board[self.create_dictionary().get(pivot)][1]
-                    board[self.size*2+1][1] += board[pivot][1]
+                    board[self.size * 2 + 1][1] += board[pivot][1]
                     board[pivot][1] = 0
                     board[self.create_dictionary().get(pivot)][1] = 0
         else:
@@ -166,7 +157,7 @@ class MancalaGame:
             player_sum += val
         res.insert(0, player_sum)
 
-        tup1 = state[self.size+1:self.size*2+1]
+        tup1 = state[self.size + 1:self.size * 2 + 1]
         player_sum = 0
         for val in tup1:
             player_sum += val
@@ -189,7 +180,7 @@ class MancalaGame:
             score0 = res[0]
             score1 = res[1]
 
-        score = (state[self.size]+score0) - (score1+state[self.size*2+1])
+        score = (state[self.size] + score0) - (score1 + state[self.size * 2 + 1])
 
         return score
 
@@ -236,7 +227,6 @@ if __name__ == "__main__":
     # print("")
     # print(mg.result((5, 5, 1, 1, 0, 6, 2, 6, 1, 1, 5, 1, 0, 2, 1), 11))
     # print(mg.score((4, 4, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 10, 0)))
-    dictn = mg.create_dictionary()
-    print (dictn)
-    print (dictn.get(10))
-
+    # dictn = mg.create_dictionary()
+    # print (dictn)
+    # print (dictn.get(10))

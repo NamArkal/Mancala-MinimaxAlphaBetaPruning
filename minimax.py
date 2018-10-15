@@ -125,6 +125,10 @@ def play_minimax(game, max_depth=None, moves=None, verbose=False):
     final_score = play(game, alg, moves=moves, verbose=verbose)
     return final_score
 
+def play_minimaxab(game, max_depth=None, moves=None, verbose=False):
+    alg = lambda game, state: minimax_ab(game, state, max_depth=max_depth)
+    final_score = play(game, alg, moves=moves, verbose=verbose)
+    return final_score
 
 if __name__ == "__main__":
     """
@@ -137,6 +141,7 @@ if __name__ == "__main__":
     mg = MancalaGame(size=5, count=2)
 
     fs = play_minimax(mg, max_depth=max_depth, moves=moves, verbose=verbose)
+    # fs = play_minimaxab(mg, max_depth=max_depth, moves=moves, verbose=verbose)
 
     # alg = lambda game, state: minimax_ab(game, state, max_depth=max_depth)
     # fs_ab = play(mg, alg, moves=moves, verbose=verbose)
