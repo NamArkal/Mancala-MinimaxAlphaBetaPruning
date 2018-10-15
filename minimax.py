@@ -91,7 +91,6 @@ def minimax_ab(game, state, alpha=None, beta=None, max_depth=None):
         u = min(utilities)
     return u, actions[utilities.index(u)], node_count + 1
 
-
 def play(game, alg, moves=None, verbose=False):
     state = game.initial()
     if verbose: print(game.string(state))

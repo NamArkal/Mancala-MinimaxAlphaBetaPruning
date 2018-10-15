@@ -104,13 +104,17 @@ class MancalaGame:
             if state[-1] == 0:
                 board.insert(len(board), [(len(state) - 1), 1])
                 if 0 <= pivot < self.size:
-                    board[self.size][1] += board[(self.size * 2) - pivot][1]
-                    board[(self.size * 2) - pivot][1] = 0
+                    board[self.size][1] += board[self.create_dictionary().get(pivot)][1]
+                    board[self.size][1] += board[pivot][1]
+                    board[pivot][1] = 0
+                    board[self.create_dictionary().get(pivot)][1] = 0
             else:
                 board.insert(len(board), [(len(state) - 1), 0])
                 if self.size < pivot < (self.size * 2 + 1):
-                    board[2 * self.size + 1][1] += board[self.size-(pivot % self.size)][1]
-                    board[self.size-(pivot % self.size)][1] = 0
+                    board[2 * self.size + 1][1] += board[self.create_dictionary().get(pivot)][1]
+                    board[self.size*2+1][1] += board[pivot][1]
+                    board[pivot][1] = 0
+                    board[self.create_dictionary().get(pivot)][1] = 0
         else:
             if state[-1] == 0:
                 board.insert(len(board), [(len(state) - 1), 1])
@@ -119,6 +123,18 @@ class MancalaGame:
 
         board = [elem[1] for elem in board]
         return tuple(board)
+
+    def create_dictionary(self):
+        dictn = {}
+        i = j = 0
+        k = self.size * 2
+        while i != self.size:
+            dictn[k] = j
+            dictn[j] = k
+            k -= 1
+            j += 1
+            i += 1
+        return dictn
 
     def is_over(self, state):
         """
@@ -218,5 +234,9 @@ if __name__ == "__main__":
     # print("Is over: %s" % mg.is_over(s))
     # print("Score = %d" % mg.score(s))
     # print("")
-    print(mg.result((0, 0, 2, 0, 2, 0, 6, 7, 1, 3, 6, 1, 0, 8, 1), 7))
+    # print(mg.result((5, 5, 1, 1, 0, 6, 2, 6, 1, 1, 5, 1, 0, 2, 1), 11))
     # print(mg.score((4, 4, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 10, 0)))
+    dictn = mg.create_dictionary()
+    print (dictn)
+    print (dictn.get(10))
+
